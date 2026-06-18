@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+
+    <!-- Package identity -->
+    <PackageId>MendDetectionQa.NugetClearProbe</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>mend-detection-qa</Authors>
+    <Company>Mend.io</Company>
+    <Description>
+      Dummy package published only to GitHub Packages under mend-detection-qa.
+      Consumed by the nuget-clear-private-only repro to prove whether a Mend
+      SCA scan honors nuget.config &lt;clear/&gt; + a single private source.
+      The package name is deliberately distinctive so it cannot exist on nuget.org.
+    </Description>
+    <PackageTags>mend;qa;probe;nuget-clear</PackageTags>
+
+    <!-- Required by GitHub Packages: must match the repo that owns the package -->
+    <RepositoryUrl>https://github.com/mend-detection-qa/nuget-clear-private-only</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <!-- Generate the .nupkg on build so `dotnet pack` is one less step -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeBuildOutput>true</IncludeBuildOutput>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MendNugetClearRepro</RootNamespace>
+    <AssemblyName>MendNugetClearRepro</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RestoreSources></RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      MendDetectionQa.NugetClearProbe is published only to GitHub Packages
+      under mend-detection-qa. It does not exist on nuget.org. If the scan
+      log shows any package resolved from api.nuget.org, the scanner
+      appended that source despite <clear/> in nuget.config.
+
+      The producer project is under private-package/ -- see its README for
+      the dotnet pack + dotnet nuget push commands.
+    -->
+    <PackageReference Include="MendDetectionQa.NugetClearProbe" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Keep the producer project out of the consumer's build/scan graph. -->
+    <Compile Remove="private-package/**" />
+    <None Remove="private-package/**" />
+    <Content Remove="private-package/**" />
+  </ItemGroup>
+
+</Project>
