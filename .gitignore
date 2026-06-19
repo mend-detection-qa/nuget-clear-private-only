@@ -1,0 +1,16 @@
+# Build artifacts
+bin/
+obj/
+
+# Local NuGet restore cache (set by globalPackagesFolder in nuget.config)
+.nuget-packages/
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
