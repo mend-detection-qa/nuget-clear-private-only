@@ -17,8 +17,8 @@
       log shows any package resolved from api.nuget.org, the scanner
       appended that source despite <clear/> in nuget.config.
 
-      The producer project is under private-package/ -- see its README for
-      the dotnet pack + dotnet nuget push commands.
+      The producer project is under private-package/ (see its README for
+      the dotnet pack + dotnet nuget push commands).
     -->
     <PackageReference Include="MendDetectionQa.NugetClearProbe" Version="1.0.0" />
   </ItemGroup>
