@@ -1,30 +1,29 @@
 {
   "scanSettings": {
-    "configMode": "LOCAL",
+    "configMode": "AUTO",
     "configExternalURL": "",
+    "enableLicenseViolations": "true",
     "projectToken": "",
-    "baseBranches": []
-  },
-  "scanSettingsSAST": {
-    "enableScan": false,
-    "scanPullRequests": false,
-    "incrementalScan": true,
     "baseBranches": [],
-    "snippetSize": 10
+    "exploitability": true
   },
   "checkRunSettings": {
     "vulnerableCheckRunConclusionLevel": "failure",
+    "licenseCheckRunConclusionLevel": "failure",
+    "useMendCheckNames": true,
+    "showWsInfo": true,
     "displayMode": "diff",
-    "useMendCheckNames": true
+    "strictMode": "failure"
+  },
+  "pullRequestStatusSettings": {
+    "vulnerablePullRequestStatus": "failed",
+    "displayMode": "diff",
+    "useMendStatusNames": true
   },
   "issueSettings": {
     "minSeverityLevel": "LOW",
-    "issueType": "DEPENDENCY"
-  },
-  "remediateSettings": {
-    "workflowRules": {
-      "enabled": true
-    }
+    "issueType": "DEPENDENCY",
+    "displayLicenseViolations": "true"
   }
 }
 

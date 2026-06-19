@@ -1,90 +1,86 @@
-# Mend SCA -- NuGet `<clear/>` + private-only feed repro
+# UVScanTest -- Mend SCA NuGet `<clear />` bypass repro
+
+Mirror of `Pension Services Corporation Ltd / UVScanTest` (TKA-10556).
 
 ## What this repo proves
 
-A NuGet `nuget.config` that uses `<packageSources><clear/>...</packageSources>`
-followed by a single private source is the standard NuGet idiom for
-**"resolve only from this feed, never fall through to nuget.org"**.
+`nuget.config` uses `<clear />` plus a single private package source. The csproj
+pins five public-NuGet packages (`Microsoft.NET.Test.Sdk`, `Moq`, `NUnit`,
+`NUnit.Analyzers`, `NUnit3TestAdapter`) at exact versions that exist on
+`api.nuget.org`. **The private feed does NOT host those exact versions** -- it
+hosts same-named packages at sentinel version `4.3.2-mend-probe`.
 
-The customer reports that on a Mend for Azure Repos SCA scan the resolver
-appends nuget.org anyway and surfaces public packages in the dep tree. This
-repo is the minimal reproduction.
+The discriminator is unambiguous:
 
-## Layout
-
-| File | Why it's here |
+| Behaviour | Dep tree contents |
 |---|---|
-| `MendNugetClearRepro.csproj` | Consumer. One `PackageReference` to `MendDetectionQa.NugetClearProbe@1.0.0`. |
-| `nuget.config` | `<clear/>` + GitHub Packages NuGet as the only source. Customer-intent shape. |
-| `.whitesource` | `configMode: LOCAL` so Mend reads `whitesource.config` below. |
-| `whitesource.config` | UA properties intended to keep the scanner from injecting nuget.org. |
-| `Program.cs` | Compiles; not load-bearing for the scan. |
-| `private-package/` | Producer. Builds `MendDetectionQa.NugetClearProbe.nupkg` for publishing to GHP. See its README for the publish flow. |
+| Mend honours `<clear />` | restore can't find e.g. `NUnit 4.3.2` on the private feed -> restore fails -> dep tree empty (or short with only the `-mend-probe` resolutions if the resolver picks the sentinel) |
+| Mend appends `nuget.org` | restore succeeds against public feed -> dep tree shows the real public versions, e.g. `NUnit 4.3.2`, `Moq 4.20.72`, etc. |
 
-## Setup -- one-time
+A "real 4.3.2" appearing in the dep tree is conclusive evidence the scanner
+queried `api.nuget.org` despite the `<clear />` directive.
 
-We use **GitHub Packages NuGet** under the `mend-detection-qa` org as the
-private feed. The Mend internal Nexus (`nexus.mendinfra.com`) is Maven-format
-only -- verified via `/service/rest/v1/repositories` -- so it cannot be used.
+## Customer-side context (from TKA-10556)
 
-1. Create the repo `mend-detection-qa/nuget-clear-private-only` on GitHub.
-2. Publish the dummy package: see `private-package/README.md` for the
-   `dotnet pack` + `dotnet nuget push` commands. Needs `GH_TOKEN` with
-   `write:packages` scope.
-3. Push this directory's contents to that repo's `main` branch.
-4. Accept Mend's "Configure Mend for GitHub.com" PR when it appears.
+* Customer: Pension Services Corporation Ltd. Mend SCA -- Mend for Azure Repos.
+* Customer's private feed `https://packman-corp.k8s-pic.int/...` is internal DNS,
+  unreachable from Mend's scan infra. They saw 11 packages resolved in the dep
+  tree -- the only feed that can serve those packages is `api.nuget.org`.
+* Mend scanner log on the customer's failing scan:
 
-## How to run the scan
+  ```
+  handling nuget.config files
+  No nuget.config files found: falling-back to creating nuget.config files
+  nuget.config files to be handled: nuget.config
+  editing nuget.config
+  reading nuget.config
+  writing nuget.config with new data
+  ```
 
-1. Push this directory to a repo under the Mend-monitored Azure DevOps project.
-2. Wait for Mend's SCA check to run, or trigger it manually.
-3. Open the Security Check details -> Scan Logs.
+  The scanner says it couldn't find the file (despite it being committed at the
+  repo root co-located with the csproj), then synthesises its own and proceeds
+  to "write with new data". The customer's `<clear />` never takes effect.
 
-## What to look for in the logs (the actual question)
+## File parity with customer repo
 
-The repro answers two questions in one scan:
+| File | Notes |
+|---|---|
+| `Pic.Eft.Globalscape.Tests.csproj` | Identical PackageReferences, framework, `NuGetAuditMode=direct`. Parent-dir references (`..\Pic.Eft.Globalscape\`, `..\stylecop.json`, `..\.editorconfig`) preserved verbatim -- they're broken in the stripped-down customer repo too. |
+| `nuget.config` | `<clear />` + single source `PIC-UK-TeamFeed`. URL points at our GHP feed instead of the customer's unreachable internal Nexus. |
+| `.whitesource` | `configMode: AUTO`, mirroring customer's `repo-config.json` shape. `baseBranches: []` (defaults to repo default) because we don't have a `production-code-scan` branch. |
+| `manifest.json`, `package-lock.json`, `pyproject.toml`, `uv.lock` | Empty/minimal stubs preserving the customer's polyglot tree. Carried in case Mend's pre-step changes behaviour when co-located PM files are present. |
 
-**Q1: Did Mend honor `<clear/>`?**
+## Diverged on purpose
 
-Search the scanner log for these strings:
+* **No `production-code-scan` branch.** Customer scans on that name as base; our
+  default is `main`. Empty `baseBranches` array uses repo default.
+* **Private feed URL.** Customer's `packman-corp.k8s-pic.int` is internal DNS we
+  can't reach; substituted with our `mend-detection-qa` GHP NuGet endpoint
+  (which is reachable from Mend infra and serves the same-named sentinel
+  packages).
 
-- `nuget.org` -- if it appears as an *active* source in any line resembling
-  `Added package source 'nuget.org'` or `Restoring from https://api.nuget.org/...`,
-  the scanner appended it. That's the bug.
-- `Using credentials from config` / `package source ... private` -- expected.
-- `dotnet restore` invocation lines -- copy the full command. If the scanner
-  added `--source https://api.nuget.org/v3/index.json` or wrote a temporary
-  `NuGet.Config` next to your project, that's the injection path.
+## Private-feed contents (published to GHP)
 
-**Q2: Did any resolved dependency actually come from nuget.org?**
+Each package is a trivial `netstandard2.0` shim whose only purpose is to
+exist on the private feed with the matching `PackageId` and a sentinel version:
 
-In the dep tree (update-request JSON) look at each dependency's `sha1` / coordinates.
-Any package that is on nuget.org but NOT on your private feed is conclusive
-evidence of fall-through. (`Contoso.Internal.Utilities` won't be on nuget.org;
-if its transitive closure pulls e.g. `Newtonsoft.Json` and that resolves from
-nuget.org instead of failing, the scanner went around `<clear/>`.)
+| Package | Sentinel version on private feed |
+|---|---|
+| `Microsoft.NET.Test.Sdk` | `17.12.0-mend-probe` |
+| `Moq`                    | `4.20.72-mend-probe` |
+| `NUnit`                  | `4.3.2-mend-probe`  |
+| `NUnit.Analyzers`        | `4.6.0-mend-probe`  |
+| `NUnit3TestAdapter`      | `4.6.0-mend-probe`  |
 
-## Expected vs actual
+Producer csproj projects live outside this repo (in
+`../nuget-clear-private-producers/`) so the consumer scan surface stays clean.
 
-| Behavior | Expected (per `<clear/>` spec) | What customer reports |
-|---|---|---|
-| Active sources during restore | `private` only | `private` + nuget.org |
-| Dep tree contents | Packages from `private` only | Includes packages sourced from nuget.org |
-| Restore failure on missing transitive | Fail fast on private feed | Silently satisfied from nuget.org |
+## How to read the scan output
 
-## Supported levers tried in `whitesource.config`
-
-- `nuget.preferredEnvironment=dotnet` -- forces `dotnet restore` (more
-  config-respecting than legacy `nuget.exe`).
-- `nuget.resolveNugetConfigs=true` -- newer UA flag to honor the in-repo config.
-- `nuget.runPreStep=true` -- runs restore once so the dep tree is read from
-  `project.assets.json` instead of re-resolved by the scanner.
-
-If even with all three set the dep tree still contains nuget.org packages,
-that's the supportability question to escalate -- there is no further
-customer-side knob today.
-
-## Confirmed non-applicable
-
-- Reusing `nexus.mendinfra.com/repository/maven-local` -- Maven format, NuGet
-  client cannot consume it. Verified against the Nexus repositories API.
+* **Dep tree shows `NUnit 4.3.2` (no suffix) + a public-feed `sha1`** -> scanner
+  queried `api.nuget.org`. Repro succeeded.
+* **Dep tree shows `NUnit 4.3.2-mend-probe`** -> scanner honoured `<clear />`
+  and used only the private feed. Bug NOT reproduced on this Mend integration.
+* **Dep tree empty / restore failed** -> something earlier broke, look at the
+  scanner log for `handling nuget.config files` / `No nuget.config files found`
+  -- that's the customer's pre-step in action.
