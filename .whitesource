@@ -9,7 +9,7 @@
   },
   "hostRules": [
     {
-      "matchHost": "https://packman-corp.k8s-pic.int/repository/dotnet-feed/",
+      "matchHost": "https://nexus.mendinfra.com/repository/dotnet-feed/",
       "username": "mend-qa",
       "hostType": "nuget",
       "encrypted": {
