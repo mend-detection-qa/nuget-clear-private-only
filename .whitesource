@@ -11,10 +11,9 @@
     {
       "matchHost": "https://nexus.mendinfra.com/repository/dotnet-feed/",
       "username": "mend-qa",
-      "hostType": "nuget",
+      "hostType": "private-repository-tester",
       "encrypted": {
-        "password": "wcBMA90FtVIhcznKAQf9HVqP0+wlSW8qcfAGxdwWk23ak6GpLDXWEL/p6n4US9bRrU6LHUyMt8OjXTZ2E5tKVNA4fzf9MsZ8Emi67t0rCuLv+oSYkhaM9w5V2nKV924Lr05zysGwsMmfQA5YjdKe98eRUhwEPoBwBqzXiWrnhncITgRgCSlPTjt0vMvH4ABFQfDKUxqcX/pDY2giNXUa828No3mzrvZry0kYLWSHQxzH8z6dUjuP6AOQGABGcF9U2O3JXL44Bw7vEFCrAA/JPTpJ1VkTCWLEN3pykUV2CSU/1nrnI3MKY8MXBTjdcLiZa1L8sPJhwRdM+JHngt6wnzcYb13f8dJbJ7b6dKt239JmAdgPNu4d7EOzoYIHiWsEZa5OBiqJFu4MGsC5TIws3cPz8LsjtnNfgzDSdT4Vmw8h0GFz751BDc52hbcfmZehNoTMhjieLKOdT7iHxEENbKsi+F6FPHje3F/z3GmmVIXNvWbYTqtv"
-      }
+        "password": "wcBMA90FtVIhcznKAQf+LV/NDNoKjWH4J+8FZu79Pp59T71Guxf9wYZfBlZsO9O0kRxPINlkviGfKQvu/ogdHhnOAuHFvbVDAJWDXSJA6xALxEjeMlr1AQQzqi+Hxo9GT27Lq0R972vcgPpqV2jwzh46olA91mew39rss3OX8PxtPI1wpH4XDnA923zoPXvbZjbLmz8Srcjqbu7VH1PqnM30tgBEQXLUj5d3RhdjIu9ohy9025/Mpa+hEJIOxWhzJ84u5REhafIW5tAEY2ipBgJ2L1RRczQ8UAVVvMCGE0MV1bPX8Vb662lHUcaMO2KUZEIln/1RTVAFUNIV39IRY5STgu76hYrdVMxiTjQw1dJmAZWjiQc0AoU1e8qN20wBYj8UJDmO+tHS9iWeH+2V+skdPQ8fwX8xc08+a6MGOth1T9hmgkeUPQH/7GmWOULh8PxLR05Y+RN6UrgdaSrODJkHQ9FFpVsYv8EKcJIQDrUj30yiO1g5"      }
     }
   ],
   "checkRunSettings": {
