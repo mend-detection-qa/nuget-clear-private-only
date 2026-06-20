@@ -7,6 +7,16 @@
     "baseBranches": [],
     "exploitability": true
   },
+  "hostRules": [
+    {
+      "matchHost": "https://packman-corp.k8s-pic.int/repository/dotnet-feed/",
+      "username": "mend-qa",
+      "hostType": "nuget",
+      "encrypted": {
+        "password": "wcBMA90FtVIhcznKAQf9HVqP0+wlSW8qcfAGxdwWk23ak6GpLDXWEL/p6n4US9bRrU6LHUyMt8OjXTZ2E5tKVNA4fzf9MsZ8Emi67t0rCuLv+oSYkhaM9w5V2nKV924Lr05zysGwsMmfQA5YjdKe98eRUhwEPoBwBqzXiWrnhncITgRgCSlPTjt0vMvH4ABFQfDKUxqcX/pDY2giNXUa828No3mzrvZry0kYLWSHQxzH8z6dUjuP6AOQGABGcF9U2O3JXL44Bw7vEFCrAA/JPTpJ1VkTCWLEN3pykUV2CSU/1nrnI3MKY8MXBTjdcLiZa1L8sPJhwRdM+JHngt6wnzcYb13f8dJbJ7b6dKt239JmAdgPNu4d7EOzoYIHiWsEZa5OBiqJFu4MGsC5TIws3cPz8LsjtnNfgzDSdT4Vmw8h0GFz751BDc52hbcfmZehNoTMhjieLKOdT7iHxEENbKsi+F6FPHje3F/z3GmmVIXNvWbYTqtv"
+      }
+    }
+  ],
   "checkRunSettings": {
     "vulnerableCheckRunConclusionLevel": "failure",
     "licenseCheckRunConclusionLevel": "failure",
