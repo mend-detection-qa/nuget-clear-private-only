@@ -10,8 +10,8 @@
   "hostRules": [
     {
       "matchHost": "https://nexus.mendinfra.com/repository/dotnet-feed/",
-      "username": "mend-qa",
-      "hostType": "private-repository-tester",
+      "username": "private-repository-tester",
+      "hostType": "nuget",
       "encrypted": {
         "password": "wcBMA90FtVIhcznKAQf+LV/NDNoKjWH4J+8FZu79Pp59T71Guxf9wYZfBlZsO9O0kRxPINlkviGfKQvu/ogdHhnOAuHFvbVDAJWDXSJA6xALxEjeMlr1AQQzqi+Hxo9GT27Lq0R972vcgPpqV2jwzh46olA91mew39rss3OX8PxtPI1wpH4XDnA923zoPXvbZjbLmz8Srcjqbu7VH1PqnM30tgBEQXLUj5d3RhdjIu9ohy9025/Mpa+hEJIOxWhzJ84u5REhafIW5tAEY2ipBgJ2L1RRczQ8UAVVvMCGE0MV1bPX8Vb662lHUcaMO2KUZEIln/1RTVAFUNIV39IRY5STgu76hYrdVMxiTjQw1dJmAZWjiQc0AoU1e8qN20wBYj8UJDmO+tHS9iWeH+2V+skdPQ8fwX8xc08+a6MGOth1T9hmgkeUPQH/7GmWOULh8PxLR05Y+RN6UrgdaSrODJkHQ9FFpVsYv8EKcJIQDrUj30yiO1g5"      }
     }
